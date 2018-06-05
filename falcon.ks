@@ -16,8 +16,6 @@ CLEARSCREEN.
 
 PRINT "F9 STARTUP INITIALIZED.".
 
-PRINT ship:heading.
-
 FROM {local countdown is 5.} UNTIL countdown = 0 step {SET countdown to countdown - 1.}
 DO
 {
@@ -33,7 +31,7 @@ STAGE.
 WAIT 0.5.
 PRINT "LIFTOFF.".
 
-UNTIL SHIP:APOAPSIS > 150000
+UNTIL ship:apoapsis > 150000
 {
   LOCK STEERING to HEADING(90, getInclinationForStage1(SHIP:ALTITUDE)).
 }
@@ -45,6 +43,12 @@ STAGE.
 WAIT 5.5.
 RCS on.
 LOCK STEERING to HEADING(270, 15).
+SET STEERINGMANAGER:MAXSTOPPINGTIME TO 7.
+
+UNTIL ship:bearing > 88 and ship:bearing < 92
+{
+  PRINT "WAITING FOR BEARING." + ship:bearing.
+}
 
 UNLOCK STEERING.
 UNLOCK THROTTLE.
