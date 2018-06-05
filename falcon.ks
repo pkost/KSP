@@ -36,19 +36,33 @@ UNTIL ship:apoapsis > 150000
   LOCK STEERING to HEADING(90, getInclinationForStage1(SHIP:ALTITUDE)).
 }
 
-//Boostback burn initialisation
+// Boostback orientation
 LOCK THROTTLE to 0.
 WAIT 2.
 STAGE.
 WAIT 5.5.
 RCS on.
-LOCK STEERING to HEADING(270, 15).
+LOCK STEERING to HEADING(270, 5).
 SET STEERINGMANAGER:MAXSTOPPINGTIME TO 7.
 
-UNTIL ship:bearing > 88 and ship:bearing < 92
+UNTIL ship:bearing > 89 and ship:bearing < 91
 {
   PRINT "WAITING FOR BEARING." + ship:bearing.
 }
+
+// Boostback burn execution. Requires manual shutdown with any A-Z key.
+
+PRINT "AWAITING MANUAL MECO. PRESS A KEY TO CONTINUE.".
+
+LOCK THROTTLE to 1.0.
+LOCK STEERING to HEADING(270, 5).
+
+IF terminal:input:getchar()
+{
+  LOCK THROTTLE to 0.
+}
+
+PRINT "BURNBACK COMPLETE, SWITCHING TO MANUAL.".
 
 UNLOCK STEERING.
 UNLOCK THROTTLE.
