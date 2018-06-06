@@ -1,25 +1,24 @@
 // Sets launch course
-
 FUNCTION getInclinationForStage1
 {
   PARAMETER alt.
-  // PRINT alt.
   local result is (100 / ((alt / 20000) + 1.1)).
   IF result > 90
   {
     return 90.
   }
-  // PRINT result.
   return result.
 }
 
 // Gets amount of fuel left, in percent.
-
 FUNCTION getFuelPercentage
 {
   local result is ((ship:liquidfuel / 24300) * 100).
   return result.
 }
+
+// Sets "pitch" as Function to be used in navball pitch orientation call.
+LOCK pitch to 90 - vectorangle(UP:FOREVECTOR, FACING:FOREVECTOR).
 
 CLEARSCREEN.
 
@@ -54,10 +53,7 @@ RCS on.
 LOCK STEERING to HEADING(270, 5).
 SET STEERINGMANAGER:MAXSTOPPINGTIME TO 7.
 
-UNTIL ship:bearing > 89.5 and ship:bearing < 90.5
-{
-  PRINT "WAITING FOR BEARING." + ship:bearing.
-}
+UNTIL ship:bearing > 89.5 and ship:bearing < 90.5 and pitch > 4.5 and pitch < 5.5
 
 // Boostback burn execution. Requires manual shutdown with any A-Z key.
 // Can not be corrected at the moment.
