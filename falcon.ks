@@ -114,3 +114,5 @@ IF ship:altitude < 50000
     PRINT "FUEL AMOUNT NOMINAL.".
   }
 }
+
+// After plasma blackout
