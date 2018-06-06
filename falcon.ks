@@ -54,14 +54,14 @@ LOCK STEERING to HEADING(270, 5).
 SET STEERINGMANAGER:MAXSTOPPINGTIME TO 7.
 
 UNTIL ship:bearing > 89.5 and ship:bearing < 90.5 and pitch > 4.5 and pitch < 5.5
-
-// Boostback burn execution. Requires manual shutdown with any A-Z key.
-// Can not be corrected at the moment.
+{
+  PRINT "STANDBY.".
+}
 
 PRINT "AWAITING MANUAL MECO. PRESS ANY KEY TO CONTINUE.".
-
 LOCK THROTTLE to 1.0.
 LOCK STEERING to HEADING(270, 5).
+RCS off.
 
 IF terminal:input:getchar()
 {
@@ -70,7 +70,8 @@ IF terminal:input:getchar()
 
 PRINT "BURNBACK COMPLETE.".
 WAIT 2.
-RCS off.
+
+// Pilot can make adjustments and corrections
 PRINT "ENTERING MANUAL CORRECTION MODE. PRESS ANY KEY TO CONTINUE".
 UNLOCK THROTTLE.
 UNLOCK STEERING.
@@ -78,4 +79,37 @@ UNLOCK STEERING.
 UNTIL terminal:input:getchar()
 {
   Wait 1.
+}
+
+RCS off.
+SAS off.
+PRINT "INITIALIZING REENTRY PROCEDURE.".
+PRINT "UNITS OF FUEL LEFT:" + ship:liquidfuel.
+PRINT getFuelPercentage.
+
+UNTIL ship:altitude < 85000
+WAIT 1.
+
+UNLOCK STEERING.
+SAS on.
+RCS on.
+WAIT 0.5.
+SET SASMODE to "retrograde".
+
+WAIT UNTIL ship:altitude < 50000.
+
+IF ship:altitude < 50000
+{
+  RCS off.
+  PRINT "EXECUTING REENTRY BURN.".
+  UNTIL getFuelPercentage < 8
+  {
+    LOCK THROTTLE to 100.
+  }
+
+  IF getFuelPercentage < 8
+  {
+    LOCK THROTTLE to 0.
+    PRINT "FUEL AMOUNT NOMINAL.".
+  }
 }
