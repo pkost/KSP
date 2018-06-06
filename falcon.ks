@@ -95,6 +95,7 @@ SAS on.
 RCS on.
 WAIT 0.5.
 SET SASMODE to "retrograde".
+AG1 on.
 
 WAIT UNTIL ship:altitude < 50000.
 
