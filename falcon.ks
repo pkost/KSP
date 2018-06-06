@@ -1,3 +1,5 @@
+// Sets launch course
+
 FUNCTION getInclinationForStage1
 {
   PARAMETER alt.
@@ -10,6 +12,8 @@ FUNCTION getInclinationForStage1
   PRINT result.
   return result.
 }
+
+// Gets amount of fuel left, in percent.
 
 FUNCTION getFuelPercentage
 {
@@ -69,8 +73,5 @@ IF terminal:input:getchar()
 }
 
 PRINT "BURNBACK COMPLETE.".
-
-// UNLOCK STEERING.
-// UNLOCK THROTTLE.
 
 CLEARSCREEN.
