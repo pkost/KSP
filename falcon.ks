@@ -3,13 +3,13 @@
 FUNCTION getInclinationForStage1
 {
   PARAMETER alt.
-  PRINT alt.
+  // PRINT alt.
   local result is (100 / ((alt / 20000) + 1.1)).
   IF result > 90
   {
     return 90.
   }
-  PRINT result.
+  // PRINT result.
   return result.
 }
 
@@ -54,7 +54,7 @@ RCS on.
 LOCK STEERING to HEADING(270, 5).
 SET STEERINGMANAGER:MAXSTOPPINGTIME TO 7.
 
-UNTIL ship:bearing > 89 and ship:bearing < 91
+UNTIL ship:bearing > 89.5 and ship:bearing < 90.5
 {
   PRINT "WAITING FOR BEARING." + ship:bearing.
 }
@@ -62,7 +62,7 @@ UNTIL ship:bearing > 89 and ship:bearing < 91
 // Boostback burn execution. Requires manual shutdown with any A-Z key.
 // Can not be corrected at the moment.
 
-PRINT "AWAITING MANUAL MECO. PRESS A KEY TO CONTINUE.".
+PRINT "AWAITING MANUAL MECO. PRESS ANY KEY TO CONTINUE.".
 
 LOCK THROTTLE to 1.0.
 LOCK STEERING to HEADING(270, 5).
@@ -73,5 +73,13 @@ IF terminal:input:getchar()
 }
 
 PRINT "BURNBACK COMPLETE.".
+WAIT 2.
+RCS off.
+PRINT "ENTERING MANUAL CORRECTION MODE. PRESS ANY KEY TO CONTINUE".
+UNLOCK THROTTLE.
+UNLOCK STEERING.
 
-CLEARSCREEN.
+UNTIL terminal:input:getchar()
+{
+  Wait 1.
+}
