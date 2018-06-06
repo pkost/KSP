@@ -1,16 +1,24 @@
+// Sets launch course
 FUNCTION getInclinationForStage1
 {
   PARAMETER alt.
-  PRINT alt.
   local result is (100 / ((alt / 20000) + 1.1)).
   IF result > 90
   {
     return 90.
   }
-  PRINT result.
   return result.
 }
 
+// Gets amount of fuel left, in percent.
+FUNCTION getFuelPercentage
+{
+  local result is ((ship:liquidfuel / 24300) * 100).
+  return result.
+}
+
+// Sets "pitch" as Function to be used in navball pitch orientation call.
+LOCK pitch to 90 - vectorangle(UP:FOREVECTOR, FACING:FOREVECTOR).
 
 CLEARSCREEN.
 
@@ -45,24 +53,64 @@ RCS on.
 LOCK STEERING to HEADING(270, 5).
 SET STEERINGMANAGER:MAXSTOPPINGTIME TO 7.
 
-UNTIL ship:bearing > 89 and ship:bearing < 91
+UNTIL ship:bearing > 89.5 and ship:bearing < 90.5 and pitch > 4.5 and pitch < 5.5
 {
-  PRINT "WAITING FOR BEARING." + ship:bearing.
+  PRINT "STANDBY.".
 }
 
-// Boostback burn execution. Requires manual shutdown with any A-Z key.
-
-PRINT "AWAITING MANUAL MECO. PRESS A KEY TO CONTINUE.".
-
+PRINT "AWAITING MANUAL MECO. PRESS ANY KEY TO CONTINUE.".
 LOCK THROTTLE to 1.0.
 LOCK STEERING to HEADING(270, 5).
+RCS off.
 
 IF terminal:input:getchar()
 {
   LOCK THROTTLE to 0.
 }
 
-PRINT "BURNBACK COMPLETE, SWITCHING TO MANUAL.".
+PRINT "BURNBACK COMPLETE.".
+WAIT 2.
+
+// Pilot can make adjustments and corrections
+PRINT "ENTERING MANUAL CORRECTION MODE. PRESS ANY KEY TO CONTINUE".
+UNLOCK THROTTLE.
+UNLOCK STEERING.
+
+UNTIL terminal:input:getchar()
+{
+  Wait 1.
+}
+
+RCS off.
+SAS off.
+PRINT "INITIALIZING REENTRY PROCEDURE.".
+PRINT "UNITS OF FUEL LEFT:" + ship:liquidfuel.
+PRINT getFuelPercentage.
+
+UNTIL ship:altitude < 85000
+WAIT 1.
 
 UNLOCK STEERING.
-UNLOCK THROTTLE.
+SAS on.
+RCS on.
+WAIT 0.5.
+SET SASMODE to "retrograde".
+AG1 on.
+
+WAIT UNTIL ship:altitude < 50000.
+
+IF ship:altitude < 50000
+{
+  RCS off.
+  PRINT "EXECUTING REENTRY BURN.".
+  UNTIL getFuelPercentage < 8
+  {
+    LOCK THROTTLE to 100.
+  }
+
+  IF getFuelPercentage < 8
+  {
+    LOCK THROTTLE to 0.
+    PRINT "FUEL AMOUNT NOMINAL.".
+  }
+}
