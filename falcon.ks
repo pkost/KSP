@@ -11,6 +11,11 @@ FUNCTION getInclinationForStage1
   return result.
 }
 
+FUNCTION getFuelPercentage
+{
+  local result is ((ship:liquidfuel / 24300) * 100).
+  return result.
+}
 
 CLEARSCREEN.
 
@@ -51,6 +56,7 @@ UNTIL ship:bearing > 89 and ship:bearing < 91
 }
 
 // Boostback burn execution. Requires manual shutdown with any A-Z key.
+// Can not be corrected at the moment.
 
 PRINT "AWAITING MANUAL MECO. PRESS A KEY TO CONTINUE.".
 
@@ -64,5 +70,7 @@ IF terminal:input:getchar()
 
 PRINT "BURNBACK COMPLETE.".
 
-UNLOCK STEERING.
-UNLOCK THROTTLE.
+// UNLOCK STEERING.
+// UNLOCK THROTTLE.
+
+CLEARSCREEN.
