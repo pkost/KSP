@@ -20,6 +20,9 @@ FUNCTION getFuelPercentage
 // Sets "pitch" as Function to be used in navball pitch orientation call.
 LOCK pitch to 90 - vectorangle(UP:FOREVECTOR, FACING:FOREVECTOR).
 
+// Sets altOverGround as estimated value to be used in landing.
+SET altOverGround to geoposition:terrainheight - 65.
+
 CLEARSCREEN.
 
 PRINT "F9 STARTUP INITIALIZED.".
@@ -51,7 +54,7 @@ STAGE.
 WAIT 5.5.
 RCS on.
 LOCK STEERING to HEADING(270, 5).
-SET STEERINGMANAGER:MAXSTOPPINGTIME TO 7.
+SET STEERINGMANAGER:MAXSTOPPINGTIME TO 4.
 
 UNTIL ship:bearing > 89.5 and ship:bearing < 90.5 and pitch > 4.5 and pitch < 5.5
 {
@@ -72,7 +75,7 @@ PRINT "BURNBACK COMPLETE.".
 WAIT 2.
 
 // Pilot can make adjustments and corrections
-PRINT "ENTERING MANUAL CORRECTION MODE. PRESS ANY KEY TO CONTINUE".
+PRINT "ENTERING MANUAL CORRECTION MODE. PRESS ANY KEY TO CONTINUE.".
 UNLOCK THROTTLE.
 UNLOCK STEERING.
 
@@ -111,8 +114,30 @@ IF ship:altitude < 50000
   IF getFuelPercentage < 8
   {
     LOCK THROTTLE to 0.
+    RCS on.
     PRINT "FUEL AMOUNT NOMINAL.".
   }
 }
 
 // After plasma blackout
+
+
+UNTIL ship:altitude < 2500.
+{
+  WAIT 0.25.
+}
+
+IF ship:altitude < 3000
+{
+  GEAR on.
+  PRINT "DEPLOYING LANDING LEGS.".
+}
+
+UNLOCK THROTTLE.
+UNLOCK STEERING.
+
+UNTIL ship:altitude < 1
+{
+  PRINT altOverGround.
+  WAIT 0.5.
+}
