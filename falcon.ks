@@ -20,8 +20,8 @@ FUNCTION getFuelPercentage
 // Sets "pitch" as Function to be used in navball pitch orientation call.
 LOCK pitch to 90 - vectorangle(UP:FOREVECTOR, FACING:FOREVECTOR).
 
-// Sets altOverGround as estimated value to be used in landing.
-SET altOverGround to geoposition:terrainheight - 65.
+// Sets terrainElevation as estimated value to be used in landing.
+SET terrainElevation to geoposition:terrainheight - 65.
 
 CLEARSCREEN.
 
