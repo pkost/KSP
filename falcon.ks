@@ -21,7 +21,6 @@ FUNCTION getFuelPercentage
 LOCK pitch to 90 - vectorangle(UP:FOREVECTOR, FACING:FOREVECTOR).
 
 // Sets terrainElevation as estimated value to be used in landing.
-SET terrainElevation to geoposition:terrainheight - 65.
 
 CLEARSCREEN.
 
@@ -122,7 +121,7 @@ IF ship:altitude < 50000
 // After plasma blackout
 
 
-UNTIL ship:altitude < 2500.
+UNTIL ship:altitude < 3000.
 {
   WAIT 0.25.
 }
@@ -136,8 +135,8 @@ IF ship:altitude < 3000
 UNLOCK THROTTLE.
 UNLOCK STEERING.
 
-UNTIL ship:altitude < 1
-{
-  PRINT altOverGround.
-  WAIT 0.5.
-}
+// UNTIL ship:altitude < 1
+// {
+//   PRINT altOverGround.
+//   WAIT 0.5.
+// }
