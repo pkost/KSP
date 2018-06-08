@@ -20,7 +20,10 @@ FUNCTION getFuelPercentage
 // Sets "pitch" as Function to be used in navball pitch orientation call.
 LOCK pitch to 90 - vectorangle(UP:FOREVECTOR, FACING:FOREVECTOR).
 
-// Sets terrainElevation as estimated value to be used in landing.
+// Calculates actual distance to ground to 1 cm accuracy for use in landing procedure.
+// IMPORTANT: Landing legs must be EXTENDED on the launch pad!
+SET shipHeight to ((ship:altitude) - (geoposition:terrainheight + 7.5)).
+LOCK altOverGround to ROUND ((ship:altitude - shipHeight - geoposition:terrainheight), 2).
 
 CLEARSCREEN.
 
@@ -40,6 +43,7 @@ WAIT 0.2.
 STAGE.
 WAIT 0.5.
 PRINT "LIFTOFF.".
+GEAR off.
 
 UNTIL ship:apoapsis > 150000
 {
@@ -97,6 +101,7 @@ SAS on.
 RCS on.
 WAIT 0.5.
 SET SASMODE to "retrograde".
+SET NAVMODE to "surface".
 AG1 on.
 
 WAIT UNTIL ship:altitude < 50000.
@@ -132,8 +137,9 @@ IF ship:altitude < 3000
   PRINT "DEPLOYING LANDING LEGS.".
 }
 
-UNLOCK THROTTLE.
-UNLOCK STEERING.
+
+// UNLOCK THROTTLE.
+// UNLOCK STEERING.
 
 // UNTIL ship:altitude < 1
 // {
