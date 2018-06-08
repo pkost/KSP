@@ -126,16 +126,17 @@ IF ship:altitude < 50000
 // After plasma blackout
 
 
-UNTIL ship:altitude < 3000.
+UNTIL altOverGround < 3000.
 {
   WAIT 0.25.
 }
 
-IF ship:altitude < 3000
+IF altOverGround < 3000
 {
   GEAR on.
   PRINT "DEPLOYING LANDING LEGS.".
 }
+
 
 
 // UNLOCK THROTTLE.
