@@ -20,10 +20,10 @@ FUNCTION getFuelPercentage
 // Sets "pitch" as Function to be used in navball pitch orientation call.
 LOCK pitch to 90 - vectorangle(UP:FOREVECTOR, FACING:FOREVECTOR).
 
-// Calculates actual distance to ground to 1 cm accuracy for use in landing procedure.
-// IMPORTANT: Landing legs must be EXTENDED on the launch pad!
-SET shipHeight to ((ship:altitude) - (geoposition:terrainheight + 7.5)).
-LOCK altOverGround to ROUND ((ship:altitude - shipHeight - geoposition:terrainheight), 2).
+// THIS PART IS BEING REWORKED.
+// Will rely on results from static fire test.
+// SET shipHeight to ((ship:altitude) - (geoposition:terrainheight + 7.5)).
+// LOCK altOverGround to ROUND ((ship:altitude - shipHeight - geoposition:terrainheight), 2).
 
 CLEARSCREEN.
 
