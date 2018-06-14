@@ -89,7 +89,7 @@ SET STEERINGMANAGER:MAXSTOPPINGTIME TO 4.
 
 UNTIL ship:bearing > 89.5 and ship:bearing < 90.5 and pitch > 4.5 and pitch < 5.5
 {
-  PRINT "STANDBY.".
+  PRINT "STANBY...".
 }
 
 PRINT "AWAITING MANUAL MECO. PRESS ANY KEY TO CONTINUE.".
