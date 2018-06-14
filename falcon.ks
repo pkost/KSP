@@ -1,3 +1,32 @@
+// GUI for telemetry data entry (Height, FuelCap, Thrust)
+LOCAL startupGUI IS gui(600, 600).
+LOCAL label IS startupGUI:addlabel("FALCON PRE-LAUNCH SETTINGS").
+SET label:style:align to "center".
+SET label:style:hstretch TO true.
+
+startupGUI:addlabel("LIQUID FUEL CAPACITY [UNITS]").
+LOCAL LiquidFuelCap to startupGUI:addtextfield("").
+startupGUI:addlabel("AVAILABLE THRUST [kN]").
+LOCAL AvailableThrust to startupGUI:addtextfield("").
+startupGUI:addlabel("HEIGHT WHEN LANDED [METERS]").
+LOCAL HeightOverGround to startupGUI:addtextfield("").
+LOCAL confirm to startupGUI:addbutton("CONFIRM SETTINGS").
+
+startupGUI:SHOW().
+
+LOCAL confirmation IS false.
+function clickChecker
+{
+  SET confirmation TO true.
+}
+SET confirm:onclick to clickChecker@.
+WAIT UNTIL confirmation.
+
+PRINT "CONFIRMED SETTINGS.".
+WAIT 2.
+PRINT "CLOSING GUI.".
+startupGUI:HIDE().
+
 // Sets launch course
 FUNCTION getInclinationForStage1
 {
@@ -13,17 +42,16 @@ FUNCTION getInclinationForStage1
 // Gets amount of fuel left, in percent.
 FUNCTION getFuelPercentage
 {
-  local result is ((ship:liquidfuel / 24300) * 100).
+  local result is (ship:liquidfuel / LiquidFuelCap:text:toScalar() * 100).
   return result.
 }
 
 // Sets "pitch" as Function to be used in navball pitch orientation call.
 LOCK pitch to 90 - vectorangle(UP:FOREVECTOR, FACING:FOREVECTOR).
 
-// THIS PART IS BEING REWORKED.
-// Will rely on results from static fire test.
-// SET shipHeight to ((ship:altitude) - (geoposition:terrainheight + 7.5)).
-// LOCK altOverGround to ROUND ((ship:altitude - shipHeight - geoposition:terrainheight), 2).
+// Sets booster height with deployed landing legs. Needs separate measurement.
+SET shipHeight to HeightOverGround:text:toScalar().
+LOCK altOverGround to ROUND ((ship:altitude - shipHeight - geoposition:terrainheight), 2).
 
 CLEARSCREEN.
 
@@ -104,21 +132,19 @@ SET SASMODE to "retrograde".
 SET NAVMODE to "surface".
 AG1 on.
 
-WAIT UNTIL ship:altitude < 50000.
+WAIT UNTIL ship:altitude < 35000.
 
-IF ship:altitude < 50000
+IF ship:altitude < 35000
 {
-  RCS off.
   PRINT "EXECUTING REENTRY BURN.".
-  UNTIL getFuelPercentage < 8
+  UNTIL getFuelPercentage < 5
   {
     LOCK THROTTLE to 100.
   }
 
-  IF getFuelPercentage < 8
+  IF getFuelPercentage < 5
   {
     LOCK THROTTLE to 0.
-    RCS on.
     PRINT "FUEL AMOUNT NOMINAL.".
   }
 }
@@ -131,11 +157,8 @@ UNTIL altOverGround < 3000.
   WAIT 0.25.
 }
 
-IF altOverGround < 3000
-{
-  GEAR on.
-  PRINT "DEPLOYING LANDING LEGS.".
-}
+GEAR on.
+PRINT "DEPLOYING LANDING LEGS.".
 
 
 
