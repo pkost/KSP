@@ -1,3 +1,9 @@
+FUNCTION getFuelPercentage
+{
+  local result is (ship:liquidfuel / LiquidFuelCap:text:toScalar() * 100).
+  return result.
+}
+
 CLEARSCREEN.
 
 PRINT "BEFORE COMMENCING, MAKE SURE THAT LSAs ARE ON SECOND STAGE AND ONLY MAIN BOOSTERS HAVE FUEL LEFT.".
@@ -46,20 +52,45 @@ for engine in elist
 PRINT " ".
 PRINT "EQUALING " + ROUND ((availablethrust), 2) + " kN IN TOTAL AT SEA LEVEL.".
 PRINT " ".
+
+LOCAL startupGUI IS gui(600, 600).
+LOCAL label IS startupGUI:addlabel("FALCON PRE-LAUNCH SETTINGS").
+SET label:style:align to "center".
+SET label:style:hstretch TO true.
+
+startupGUI:addlabel("LIQUID FUEL CAPACITY [UNITS]").
+LOCAL LiquidFuelCap to startupGUI:addtextfield("").
+startupGUI:addlabel("AVAILABLE THRUST [kN]").
+LOCAL AvailableThrust to startupGUI:addtextfield("").
+LOCAL confirm to startupGUI:addbutton("CONFIRM SETTINGS").
+
+startupGUI:SHOW().
+
+LOCAL confirmation IS false.
+function clickChecker
+{
+  SET confirmation TO true.
+}
+SET confirm:onclick to clickChecker@.
+WAIT UNTIL confirmation.
+
+PRINT "CONFIRMED SETTINGS.".
+WAIT 2.
+PRINT "CLOSING GUI.".
+startupGUI:HIDE().
+
 PRINT "READY FOR STATIC FIRE TEST. PRESS ANY KEY TO CONTINUE...".
 UNTIL terminal:input:getchar()
 {
   Wait 1.
 }
 
-PRINT "DELTA V (m/s^2) = " + ROUND (((availablethrust / ship:mass)) - ship:sensors:grav:mag, 2).
+PRINT "DELTA V (m/s^2) = " + ROUND (((availablethrust:text:toScalar() / ship:mass)) - 9.806, 2).
 LOCK THROTTLE to 1.
 
-UNTIL availablethrust < 1
-{
-  WAIT 7.5.
-  PRINT "DELTA V (m/s^2) = " + ROUND (((availablethrust / ship:mass)) - ship:sensors:grav:mag, 2).
-}
+WAIT UNTIL getFuelPercentage < 5.
+LOCK THROTTLE to 0.
+PRINT "TWR at 5% fuel left: " + ROUND ((ship:MAXTHRUST / ship:mass), 2).
 
 PRINT "STATIC FIRE TEST COMPLETE. STANDBY...".
 WAIT 2.
